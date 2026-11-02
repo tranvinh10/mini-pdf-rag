@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from embed import embed_texts
+from .embed import embed_texts
 import os
 
 SUFFIX = os.environ.get("RAG_INDEX", "")
