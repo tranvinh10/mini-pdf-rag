@@ -1,4 +1,4 @@
-from load import load_pdf
+from .load import load_pdf
 import re
 
 def chunk_by_article(pages, max_len=1200):
