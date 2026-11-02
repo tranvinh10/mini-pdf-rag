@@ -1,7 +1,7 @@
 import re
 import time
 import ollama
-from src.retrieve import retrieve
+from .retrieve import retrieve
 
 MODEL = "qwen2.5:3b"
 THRESHOLD = 0.55
