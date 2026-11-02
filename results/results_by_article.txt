@@ -1,0 +1,86 @@
+PS D:\Dev\Directory\my-rag> (Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& d:\Dev\Directory\my-rag\.venv\Scripts\Activate.ps1)
+(.venv) PS D:\Dev\Directory\my-rag> $env:RAG_INDEX="_old"
+(.venv) PS D:\Dev\Directory\my-rag> python eval.py eval_dev.json
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|████████████████████████████████████████████████████████████████████| 391/391 [00:00<00:00, 24411.99it/s]
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:02<00:00,  2.29s/it]
+prefill: 103 token/s | decode: 16.7 token/s
+OK  | top=0.74 | cite: OK | Mã tài liệu của Quy chế Quản lý Nhân sự & Vận hành Nội bộ NovaTech là gì?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.56it/s]
+prefill: 117 token/s | decode: 17.5 token/s
+OK  | top=0.63 | cite: OK | Khung giờ làm việc cốt lõi (Core-hours) tại công ty được quy định trong những khoảng thời gian nào?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.05it/s]
+prefill: 116 token/s | decode: 16.6 token/s
+OK  | top=0.60 | cite: OK | Đi muộn quá bao nhiêu phút mà không có lý do chính đáng sẽ bị tính là 0.5 buổi nghỉ không lương?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.22it/s]
+prefill: 270 token/s | decode: 16.8 token/s
+OK  | top=0.70 | cite: OK | Nhân viên chính thức được đăng ký làm việc từ xa (WFH) tối đa bao nhiêu ngày trong 01 tháng?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.35it/s]
+prefill: 117 token/s | decode: 17.9 token/s
+OK  | top=0.64 | cite: OK | Nhân viên chính thức có bao nhiêu ngày phép năm có hưởng lương trong một năm?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.90it/s]
+SAI | top=0.52 | cite: SAI (bot cite []) | Phép năm chưa sử dụng hết của năm cũ phải được sử dụng trước ngày nào của năm kế tiếp?
+    BOT: Tôi không tìm thấy thông tin này trong tài liệu.
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  7.02it/s]
+    chunk: 0.52 | trang 2 | 'Điều 5: Chế độ Nghỉ phép năm\n1. Nhân viên chính thức có 12 ngày phép n'
+    chunk: 0.49 | trang 3 | 'nh giá hiệu suất làm việc theo chu kỳ 06 tháng/lần (Kỳ 1: Tháng 6, Kỳ '
+    chunk: 0.41 | trang 1 | 'iểm danh\n1. Tổng thời gian làm việc tiêu chuẩn là 40 giờ/tuần (từ Thứ '
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.73it/s]
+prefill: 1096 token/s | decode: 18.0 token/s
+OK  | top=0.66 | cite: OK | Mật khẩu tài khoản công ty bắt buộc phải đạt độ dài tối thiểu bao nhiêu ký tự và đổi định kỳ sau bao nhiêu ngày?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.79it/s]
+prefill: 130 token/s | decode: 17.9 token/s
+SAI | top=0.66 | cite: OK | Mức phụ cấp lưu trú khi đi công tác tại Đô thị Loại I dành cho cấp Trưởng nhóm (Level 4-5) là bao nhiêu tiền một ngày?
+    BOT: Mức phụ cấp lưu trú khi đi công tác tại Đô thị Loại I dành cho cấp Trưởng nhóm (Level 4-5) là 800.000 VNĐ một ngày.
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.83it/s]
+    chunk: 0.66 | trang 2 | 'p.\nSECRET: Dữ liệu khách hàng, khóa riêng tư (Private Keys), cơ sở dữ '
+    chunk: 0.50 | trang 3 | 'Điều 9: Quy trình Duyệt Chi và Tạm ứng\n1. Khoản tạm ứng công tác phí t'
+    chunk: 0.46 | trang 1 | 'iểm danh\n1. Tổng thời gian làm việc tiêu chuẩn là 40 giờ/tuần (từ Thứ '
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.62it/s]
+prefill: 239 token/s | decode: 18.7 token/s
+SAI | top=0.56 | cite: SAI (bot cite []) | Mã số thuế của Công ty NovaTech là gì?
+    BOT: Tôi không tìm thấy thông tin này trong tài liệu.
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.09it/s]
+    chunk: 0.56 | trang 1 | 'CÔNG TY CỔ PHẦN CÔNG NGHỆ NOVATECH\nQUY CHẾ QUẢN LÝ NHÂN SỰ & VẬN HÀNH '
+    chunk: 0.56 | trang 2 | 'Điều 5: Chế độ Nghỉ phép năm\n1. Nhân viên chính thức có 12 ngày phép n'
+    chunk: 0.53 | trang 2 | 'p.\nSECRET: Dữ liệu khách hàng, khóa riêng tư (Private Keys), cơ sở dữ '
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.04it/s]
+prefill: 166 token/s | decode: 16.6 token/s
+OK  | top=0.75 | cite: OK | Khoản tạm ứng công tác phí trên 10.000.000 VNĐ phải gửi lên hệ thống trước ngày khởi hành ít nhất bao nhiêu ngày làm việc?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.63it/s]
+prefill: 1136 token/s | decode: 17.5 token/s
+SAI | top=0.65 | cite: OK | SLA thời gian phản hồi và thời gian khắc phục tối đa đối với sự cố IT cấp độ P1 (Critical) là bao lâu?
+    BOT: SLA thời gian phản hồi và thời gian khắc phục tối đa đối với sự cố IT cấp độ P1 (Critical) là 15 phút và 2小时。
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.78it/s]
+    chunk: 0.65 | trang 3 | 'Điều 9: Quy trình Duyệt Chi và Tạm ứng\n1. Khoản tạm ứng công tác phí t'
+    chunk: 0.51 | trang 2 | 'Điều 5: Chế độ Nghỉ phép năm\n1. Nhân viên chính thức có 12 ngày phép n'
+    chunk: 0.49 | trang 3 | 'nh giá hiệu suất làm việc theo chu kỳ 06 tháng/lần (Kỳ 1: Tháng 6, Kỳ '
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.18it/s]
+prefill: 118 token/s | decode: 18.0 token/s
+OK  | top=0.63 | cite: OK | Hình thức kỷ luật sa thải áp dụng khi nhân viên nghỉ việc không lý do liên tục bao nhiêu ngày làm việc trong một tháng?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.13it/s]
+prefill: 137 token/s | decode: 16.6 token/s
+OK  | top=0.64 | cite: SAI (bot cite [1]) | Thời gian làm việc tiêu chuẩn một tuần và số ngày phép năm của nhân viên chính thứclà bao nhiêu?
+    BOT: Thời gian làm việc tiêu chuẩn một tuần là 40 giờ/tuần. Số ngày phép năm của nhân viên chính thức là 12 ngày.
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.06it/s]
+    chunk: 0.64 | trang 1 | 'iểm danh\n1. Tổng thời gian làm việc tiêu chuẩn là 40 giờ/tuần (từ Thứ '
+    chunk: 0.63 | trang 2 | 'Điều 5: Chế độ Nghỉ phép năm\n1. Nhân viên chính thức có 12 ngày phép n'
+    chunk: 0.59 | trang 3 | 'Điều 9: Quy trình Duyệt Chi và Tạm ứng\n1. Khoản tạm ứng công tác phí t'
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.29it/s]
+OK  | top=0.51 | cite: - | Mức phần trăm lương chính thức mà nhân viên thử việc được nhận là bao nhiêu?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.84it/s]
+OK  | top=0.28 | cite: - | Thủ đô của nước Pháp là thành phố nào?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.68it/s]
+OK  | top=0.52 | cite: - | Công ty có chế độ bảo hiểm sức khỏe cho nhân viên không?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.49it/s]
+OK  | top=0.54 | cite: - | Nhân viên làm thêm giờ (OT) được trả bao nhiêu phần trăm lương?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  6.40it/s]
+prefill: 1773 token/s | decode: 16.7 token/s
+OK  | top=0.60 | cite: - | Phụ cấp công tác nước ngoài của cấp Trưởng nhóm là bao nhiêu?
+Batches: 100%|███████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  5.77it/s]
+OK  | top=0.52 | cite: - | Nhân viên nữ được nghỉ thai sản bao nhiêu tháng?
+---
+Từ chối đúng: 6/6
+Trả lời đúng: 9/13
+Trích dẫn đúng trang: 10/13
+Thời gian TB: 6.5s/câu

@@ -1,0 +1,4 @@
+pypdf
+sentence-transformers
+numpy
+ollama

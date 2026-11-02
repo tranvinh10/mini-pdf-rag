@@ -1,0 +1,92 @@
+[
+  {  
+    "q": "Mã tài liệu của Quy chế Quản lý Nhân sự & Vận hành Nội bộ NovaTech là gì?",
+    "type": "answer",
+    "all_of": ["QC-NVB-2026/NT"],
+    "pages": [1]
+  },
+  {
+    "q": "Khung giờ làm việc cốt lõi (Core-hours) tại công ty được quy định trong những khoảng thời gian nào?",
+    "type": "answer",
+    "all_of": ["09:30 đến 11:30", "14:00 đến 16:00"],
+    "pages": [1]
+  },
+  {
+    "q": "Đi muộn quá bao nhiêu phút mà không có lý do chính đáng sẽ bị tính là 0.5 buổi nghỉ không lương?",
+    "type": "answer",
+    "all_of": ["15 phút"],
+    "pages": [1]
+  },
+  {
+    "q": "Nhân viên chính thức được đăng ký làm việc từ xa (WFH) tối đa bao nhiêu ngày trong 01 tháng?",
+    "type": "answer",
+    "all_of": ["04 ngày"],
+    "pages": [1]
+  },
+  {
+    "q": "Nhân viên chính thức có bao nhiêu ngày phép năm có hưởng lương trong một năm?",
+    "type": "answer",
+    "all_of": ["12 ngày"],
+    "pages": [2]
+  },
+  {
+    "q": "Phép năm chưa sử dụng hết của năm cũ phải được sử dụng trước ngày nào của năm kế tiếp?",
+    "type": "answer",
+    "all_of": ["31/03"],
+    "pages": [2]
+  },
+  {
+    "q": "Mật khẩu tài khoản công ty bắt buộc phải đạt độ dài tối thiểu bao nhiêu ký tự và đổi định kỳ sau bao nhiêu ngày?",
+    "type": "answer",
+    "all_of": ["14 ký tự", "90 ngày"],
+    "pages": [2]
+  },
+  {
+    "q": "Mức phụ cấp lưu trú khi đi công tác tại Đô thị Loại I dành cho cấp Trưởng nhóm (Level 4-5) là bao nhiêu tiền một ngày?",
+    "type": "answer",
+    "all_of": ["650.000"],
+    "pages": [2]
+  },
+  {
+    "q": "Mã số thuế của Công ty NovaTech là gì?",
+    "type": "answer",
+    "all_of": ["0109876543"],
+    "pages": [2]
+  },
+  {
+    "q": "Khoản tạm ứng công tác phí trên 10.000.000 VNĐ phải gửi lên hệ thống trước ngày khởi hành ít nhất bao nhiêu ngày làm việc?",
+    "type": "answer",
+    "all_of": ["03 ngày"],
+    "pages": [3]
+  },
+  {
+    "q": "SLA thời gian phản hồi và thời gian khắc phục tối đa đối với sự cố IT cấp độ P1 (Critical) là bao lâu?",
+    "type": "answer",
+    "all_of": ["15 phút", "02 giờ"],
+    "pages": [3]
+  },
+  {
+    "q": "Hình thức kỷ luật sa thải áp dụng khi nhân viên nghỉ việc không lý do liên tục bao nhiêu ngày làm việc trong một tháng?",
+    "type": "answer",
+    "all_of": ["05 ngày"],
+    "pages": [3]
+  },
+  {
+    "q": "Thời gian làm việc tiêu chuẩn một tuần và số ngày phép năm của nhân viên chính thức là bao nhiêu?",
+    "type": "answer",
+    "all_of": ["40 giờ", "12 ngày"],
+    "pages": [1, 2]
+  },
+  {
+    "q": "Mức phần trăm lương chính thức mà nhân viên thử việc được nhận là bao nhiêu?",
+    "type": "refuse"
+  },
+  {
+    "q": "Thủ đô của nước Pháp là thành phố nào?",
+    "type": "refuse"
+  },
+  {"q": "Công ty có chế độ bảo hiểm sức khỏe cho nhân viên không?", "type": "refuse"},
+  {"q": "Nhân viên làm thêm giờ (OT) được trả bao nhiêu phần trăm lương?", "type": "refuse"},
+  {"q": "Phụ cấp công tác nước ngoài của cấp Trưởng nhóm là bao nhiêu?", "type": "refuse"},
+  {"q": "Nhân viên nữ được nghỉ thai sản bao nhiêu tháng?", "type": "refuse"}
+]

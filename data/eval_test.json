@@ -1,0 +1,14 @@
+[
+    {"q": "Đơn làm việc từ xa phải được sếp duyệt trước bao nhiêu tiếng và nhân viên chính thức có bao nhiêu ngày phép năm?","type": "answer","all_of": ["24 giờ", "12 ngày"],"pages": [1, 2]},
+    {"q": "Công ty có hỗ trợ tiền phụ cấp ăn trưa hàng tháng cho nhân viên không?","type": "refuse"},
+    {"q": "Nếu nộp chứng từ sau chuyến công tác quá hạn thì khoản tạm ứng bị xử lý thế nào?", "type": "answer", "all_of": ["lương"], "pages": [3]},
+    {"q": "Khóa riêng tư (Private Keys) thuộc nhóm bảo mật nào?", "type": "answer", "all_of": ["secret"], "pages": [2]},
+    {"q": "Nhân viên bị xếp loại C trong hai kỳ liên tiếp thì sẽ bị xem xét như thế nào?", "type": "answer", "all_of": ["hợp đồng"], "pages": [3]},
+    {"q": "Khi WFH, nhân viên phải phản hồi tin nhắn công việc trong tối đa bao lâu?", "type": "answer", "all_of": ["30 phút"], "pages": [1]},
+    {"q": "Công ty có tổ chức team building hoặc du lịch hằng năm không?", "type": "refuse"},
+    {"q": "Nghỉ ốm có cần giấy khám bệnh không?", "type": "refuse"},
+    {"q": "Nếu tôi đi muộn trên 15 phút mà không xin phép trước thì sẽ bị phạt như thế nào?", "type": "answer", "all_of": ["0.5 buổi", "không lương"], "pages": [1]},
+    {"q": "Bao lâu thì cán bộ nhân viên công ty bắt buộc phải cập nhật lại mật khẩu tài khoản làm việc một lần?", "type": "answer", "all_of": ["90 ngày"], "pages": [2]},
+    {"q": "Hệ thống gặp sự cố nghiêm trọng khiến toàn bộ mạng công ty bị ngắt kết nối thì IT có bao nhiêu thời gian để giải quyết xong?", "type": "answer", "all_of": ["02 giờ"], "pages": [3]},
+    {"q": "Mức ngân sách hỗ trợ trang thiết bị và mua laptop cá nhân của công ty là bao nhiêu?", "type": "refuse"}
+]

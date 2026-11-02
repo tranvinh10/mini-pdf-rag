@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.vscode/
+
+# File sinh ra khi chạy embed.py (chạy lại embed.py để tạo)
+vectors*.npy
+chunks*.json
