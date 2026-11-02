@@ -2,13 +2,13 @@ import json
 import re
 import sys
 import time
-from generate import answer, REFUSE
-from src.retrieve import retrieve
+from .generate import answer, REFUSE
+from .retrieve import retrieve
 
 def norm(s):
     return re.sub(r"\b0(\d)\b", r"\1", s.lower())   # "04 ngày" -> "4 ngày"
 
-path = sys.argv[1] if len(sys.argv) > 1 else "eval_set.json"
+path = sys.argv[1] if len(sys.argv) > 1 else "data/eval_dev.json"
 with open(path, encoding="utf-8") as f:
     items = json.load(f)
 
