@@ -1,8 +1,8 @@
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from load import load_pdf
-from chunk import chunk_by_article
+from .load import load_pdf
+from .chunk import chunk_by_article
 import json
 
 model = SentenceTransformer("BAAI/bge-m3")
