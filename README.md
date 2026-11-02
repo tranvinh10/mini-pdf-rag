@@ -1,109 +1,230 @@
-# RAG hỏi đáp tài liệu tiếng Việt (có trích dẫn nguồn)
+# Mini PDF RAG – Hỏi đáp tài liệu tiếng Việt có trích dẫn nguồn
 
-Dự án học tập: tự xây pipeline RAG từ đầu (không dùng LlamaIndex/LangChain) để hỏi đáp trên tài liệu PDF tiếng Việt, **có trích dẫn nguồn (file, trang)** và **từ chối khi tài liệu không có thông tin**. Chạy hoàn toàn local, không cần API key.
+Dự án học tập xây dựng pipeline **Retrieval-Augmented Generation (RAG)** từ các thành phần nền tảng, không sử dụng LangChain hoặc LlamaIndex. Hệ thống cho phép hỏi đáp trên tài liệu PDF tiếng Việt, hiển thị nguồn theo **tên file và số trang**, đồng thời từ chối khi không tìm thấy thông tin phù hợp trong tài liệu.
 
-> Tài liệu mẫu `docs/Tailieu.pdf` là quy chế của công ty hư cấu "NovaTech", do AI tạo ra để thử nghiệm. Mọi số liệu trong đó (kể cả mã số thuế) đều là giả.
+Dự án chạy local, không yêu cầu API key.
 
-## Pipeline
+> **Tài liệu mẫu:** `docs/Tailieu.pdf` là quy chế của công ty hư cấu NovaTech, được tạo để thử nghiệm. Mọi thông tin và số liệu trong tài liệu, bao gồm mã số thuế, đều là giả.
 
+## 1. Công nghệ sử dụng
+
+- **Python 3.11+**
+- **pypdf:** trích xuất văn bản và số trang từ PDF.
+- **BAAI/bge-m3:** tạo embedding 1024 chiều.
+- **NumPy:** lưu vector và tính cosine similarity.
+- **Ollama + Qwen2.5 3B:** sinh câu trả lời hoàn toàn local.
+
+## 2. Pipeline hoạt động
+
+### Indexing – thực hiện khi tạo hoặc cập nhật tài liệu
+
+```text
+PDF
+  -> pypdf: đọc từng trang và giữ metadata (file, trang)
+  -> Chunking: chia nội dung theo cấu trúc "Điều"
+  -> BAAI/bge-m3: chuyển mỗi chunk thành vector 1024 chiều
+  -> Lưu data/vectors.npy và data/chunks.json
 ```
-Indexing (chạy 1 lần)
-  PDF -> load (pypdf) -> chunk theo "Điều" -> embedding (BAAI/bge-m3, 1024 chiều)
-      -> vectors.npy + chunks.json   (vectors[i] ứng với chunks[i])
 
-Querying (mỗi câu hỏi)
-  câu hỏi -> embedding -> cosine similarity (NumPy) -> top-3 chunk
-  -> Lớp từ chối 1: loại chunk có điểm < 0.55; không còn chunk nào thì từ chối ngay (không gọi LLM)
-  -> prompt (ngữ cảnh đánh số [1], [2]...) -> LLM (Qwen2.5 3B qua Ollama, temperature 0)
-  -> Lớp từ chối 2: LLM tự từ chối nếu ngữ cảnh không đủ thông tin
-  -> tách câu trả lời và nhãn NGUỒN -> hiển thị file/trang
+Hai file được tạo có quan hệ theo chỉ số: `vectors[i]` là embedding của `chunks[i]`.
+
+### Querying – thực hiện với mỗi câu hỏi
+
+```text
+Câu hỏi
+  -> BGE-M3: tạo embedding cho câu hỏi
+  -> NumPy: cosine similarity và lấy top-3 chunk
+  -> Lớp từ chối 1: bỏ chunk có điểm < 0.55
+       -> Không còn chunk phù hợp: từ chối ngay, không gọi LLM
+  -> Tạo prompt với các đoạn ngữ cảnh đánh số [1], [2], ...
+  -> Qwen2.5 3B qua Ollama (temperature = 0)
+  -> Lớp từ chối 2: LLM từ chối nếu ngữ cảnh không đủ thông tin
+  -> Tách câu trả lời và nhãn NGUỒN
+  -> Hiển thị câu trả lời cùng file/trang được trích dẫn
 ```
 
-## Cấu trúc thư mục
+## 3. Cấu trúc dự án
 
-| File | Vai trò |
+Chạy các lệnh Python từ **thư mục gốc của repository** (thư mục chứa `README.md`).
+
+```text
+mini-pdf-rag/
+├── data/
+│   ├── eval_dev.json          # 19 câu hỏi phát triển
+│   ├── eval_test.json         # 12 câu hỏi kiểm thử
+│   ├── chunks.json            # Tạo bởi src.embed
+│   └── vectors.npy            # Tạo bởi src.embed
+├── docs/
+│   └── Tailieu.pdf            # PDF mẫu
+├── results/
+│   ├── dev_final.txt
+│   ├── results_by_article.txt
+│   └── test_final.txt
+├── src/
+│   ├── __init__.py
+│   ├── load.py
+│   ├── chunk.py
+│   ├── embed.py
+│   ├── retrieve.py
+│   ├── generate.py
+│   ├── eval.py
+│   └── inspect_chunk.py
+├── requirements.txt
+└── README.md
+```
+
+| Module | Vai trò |
 |---|---|
-| `load.py` | Đọc PDF, giữ metadata (file, trang) cho từng trang |
-| `chunk.py` | Chunking: `chunk_pages` (cố định ký tự + overlap) và `chunk_by_article` (theo "Điều") |
-| `embed.py` | Embedding các chunk, lưu `vectors.npy` và `chunks.json` |
-| `retrieve.py` | Embed câu hỏi, cosine similarity, lấy top-k |
-| `generate.py` | Prompt, gọi LLM, từ chối 2 lớp, tách nguồn trích dẫn |
-| `eval.py` | Chạy bộ câu hỏi, chấm 3 chỉ số: từ chối, trả lời, trích dẫn |
-| `inspect_chunk.py` | Xem nội dung đầy đủ của các chunk top-k (để chẩn đoán lỗi) |
-| `eval_dev.json` | Bộ dev: 19 câu (13 có đáp án, 6 ngoài phạm vi) |
-| `eval_test.json` | Bộ test: 12 câu (8 có đáp án, 4 ngoài phạm vi), soạn riêng, chỉ chạy sau khi đóng băng code |
+| `src/load.py` | Đọc PDF, lưu nội dung từng trang và metadata `source`, `page`. |
+| `src/chunk.py` | Chia văn bản theo số ký tự có overlap hoặc theo cấu trúc `Điều`. |
+| `src/embed.py` | Tạo embedding và lưu `data/vectors.npy`, `data/chunks.json`. |
+| `src/retrieve.py` | Nhúng câu hỏi, tính cosine similarity và lấy top-k chunk. |
+| `src/generate.py` | Tạo prompt, gọi Ollama, xử lý từ chối và nguồn trích dẫn. |
+| `src/eval.py` | Chạy bộ câu hỏi và chấm từ chối, trả lời, trích dẫn. |
+| `src/inspect_chunk.py` | In nội dung các chunk được truy xuất để chẩn đoán lỗi. |
 
-## Cách chạy
+## 4. Cài đặt và chạy
 
-Yêu cầu: Python 3.11+, [Ollama](https://ollama.com) đang chạy. Cần khoảng 5GB RAM trống (embedding model ~2GB, LLM ~2GB).
+### Yêu cầu
+
+- Python 3.11 trở lên.
+- [Ollama](https://ollama.com/) đã được cài đặt và đang chạy.
+- Khoảng 5 GB RAM trống là mức dự trù cho embedding model và LLM; mức sử dụng thực tế tùy môi trường.
+
+### Bước 1 – Tạo môi trường Python
+
+**Windows PowerShell:**
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+**macOS / Linux:**
 
 ```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate | macOS/Linux: source .venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
-ollama pull qwen2.5:3b
-
-python embed.py        # tạo vectors.npy và chunks.json (lần đầu tự tải bge-m3 ~2GB)
-python generate.py     # hỏi đáp trên terminal
-python eval.py eval_dev.json
 ```
 
-Trên Windows PowerShell, nếu dùng pipe (`| Tee-Object`), đặt trước: `$env:PYTHONUTF8 = "1"`.
+### Bước 2 – Tải LLM
 
-## Kết quả đánh giá
+```bash
+ollama pull qwen2.5:3b
+```
 
-Chấm bằng từ khoá (câu trả lời phải chứa đủ từ khoá, trích dẫn phải đủ các trang cần thiết). Đây là cách chấm thô, có thể chấm sai những câu trả lời đúng nhưng diễn đạt khác.
+Đảm bảo Ollama đang chạy trước khi sử dụng chức năng hỏi đáp hoặc đánh giá. Trên máy cài Ollama dạng service/desktop, ứng dụng thường tự quản lý tiến trình; nếu môi trường yêu cầu, có thể chạy `ollama serve` trong một terminal riêng.
 
-### Bộ dev (19 câu): dùng để chọn chunking, prompt, ngưỡng
+### Bước 3 – Tạo chỉ mục embedding
+
+Chạy từ thư mục gốc repository:
+
+```bash
+python -m src.embed
+```
+
+Lần đầu chạy, Sentence Transformers sẽ tải model `BAAI/bge-m3` (khoảng 2 GB, tùy phiên bản/cache). Sau khi hoàn tất, chương trình tạo:
+
+- `data/vectors.npy`: ma trận embedding.
+- `data/chunks.json`: nội dung chunk và metadata tương ứng.
+
+Không cần chạy lại bước này mỗi lần đặt câu hỏi. Hãy chạy lại khi thay đổi PDF hoặc cách chunking.
+
+### Bước 4 – Hỏi đáp trên terminal
+
+```bash
+python -m src.generate
+```
+
+Nhập câu hỏi tại dấu nhắc `Hỏi`. Nhấn Enter trên dòng trống để thoát.
+
+### Bước 5 – Chạy đánh giá
+
+Chạy bộ dev:
+
+```bash
+python -m src.eval data/eval_dev.json
+```
+
+Chạy bộ test (chỉ sau khi đã chốt code và cấu hình):
+
+```bash
+python -m src.eval data/eval_test.json
+```
+
+Chương trình in kết quả từng câu hỏi và tổng hợp ba chỉ số: từ chối đúng, trả lời đúng và trích dẫn đúng trang.
+
+### Công cụ kiểm tra retrieval
+
+Để xem nội dung các chunk top-3 cho một câu hỏi:
+
+```bash
+python -m src.inspect_chunk "Câu hỏi cần kiểm tra"
+```
+
+### Lưu log khi chạy trên Windows PowerShell
+
+Nếu terminal hiển thị tiếng Việt bị lỗi khi chuyển hướng output, đặt UTF-8 trước:
+
+```powershell
+$env:PYTHONUTF8 = "1"
+python -m src.eval data/eval_dev.json | Tee-Object -FilePath results/dev_final.txt
+```
+
+**Lưu ý:** luôn chạy lệnh từ thư mục gốc repository. Các module trong `src/` được chạy theo dạng package bằng `python -m src.<module>`; không chạy bằng cách chuyển vào thư mục `src` rồi gọi trực tiếp file Python.
+
+## 5. Đánh giá
+
+Bộ đánh giá hiện dùng kiểm tra từ khóa: câu trả lời phải chứa đủ các từ khóa khai báo trong JSON và trích dẫn phải bao gồm tất cả các trang kỳ vọng. Đây là cách chấm đơn giản; có thể đánh dấu sai câu trả lời đúng nếu cách diễn đạt khác từ khóa.
+
+### Bộ dev – 19 câu
+
+Bộ dev được dùng trong quá trình điều chỉnh chunking, prompt và ngưỡng retrieval.
 
 | Phiên bản | Từ chối đúng | Trả lời đúng | Trích dẫn đúng |
-|---|---|---|---|
+|---|---:|---:|---:|
 | Chunk cố định 800 ký tự | 6/6 | 9/13 | 10/13 |
 | Chunk theo "Điều" | 6/6 | 9/13 | 10/13 |
-| + sửa regex tách nguồn, yêu cầu "chỉ tiếng Việt" | 6/6 | 10/13 | 10/13 |
-| + định dạng `TRẢ LỜI:` / `NGUỒN:` (**bản cuối, v1.0**) | 6/6 | 9/13 | 11/13 |
+| Sửa regex tách nguồn, yêu cầu chỉ tiếng Việt | 6/6 | 10/13 | 10/13 |
+| Định dạng `TRẢ LỜI:` / `NGUỒN:` (bản cuối v1.0) | 6/6 | 9/13 | 11/13 |
 
-Chênh 1 câu trên 13 câu là nhiễu, chưa đủ để kết luận phiên bản nào tốt hơn. Bản cuối được chọn vì sửa được lỗi câu trả lời rỗng (model chỉ in `NGUỒN: [1]`). Vì dev được dùng để chỉnh hệ thống nên số trên dev có xu hướng lạc quan.
+Chênh lệch một câu trên 13 câu chưa đủ để kết luận phiên bản nào tốt hơn. Bản cuối được chọn vì khắc phục lỗi câu trả lời rỗng khi model chỉ in nhãn nguồn. Do bộ dev được dùng để điều chỉnh hệ thống, kết quả trên dev có xu hướng lạc quan.
 
-### Bộ test: soạn riêng, chạy sau khi đóng băng code
+### Bộ test – 12 câu
 
-Lần chạy đầu `eval_test.json` bị trùng một câu hỏi; đã sửa file (không đổi code) rồi chạy lại.
+Bộ test được soạn riêng để kiểm tra sau khi đóng băng code. Tuy nhiên, tại snapshot repository hiện tại, `results/test_final.txt` chưa khớp với `data/eval_test.json`: kết quả có câu hỏi lặp và không phản ánh đầy đủ danh sách 12 câu hiện tại. Vì vậy, **không nên xem điểm số test được ghi trong log cũ là kết quả xác nhận cho bộ JSON hiện tại**.
 
-| Từ chối đúng | Trả lời đúng | Trích dẫn đúng |
-|---|---|---|
-| 4/4 | 6/8 | 6/8 |
+Hãy chạy lại bộ test sau khi đóng băng code và cập nhật log:
 
-Bộ test gồm 12 câu (8 có đáp án, 4 ngoài phạm vi). Ba trong tám câu có đáp án là cách hỏi khác của nội dung đã có trong dev, nên bộ này đo cả khả năng hiểu cách diễn đạt khác lẫn thông tin mới. Test cao hơn dev một chút không có nghĩa hệ thống tổng quát tốt: bộ nhỏ và có phần dễ hơn.
+```powershell
+$env:PYTHONUTF8 = "1"
+python -m src.eval data/eval_test.json | Tee-Object -FilePath results/test_final.txt
+```
 
-Lỗi trên test (2 câu, cả hai đều sai ở trả lời và trích dẫn):
-- **Khóa riêng tư thuộc nhóm bảo mật nào?** Chunk đúng (Điều 7) đứng top-1 nhưng chỉ đạt 0.54, thấp hơn ngưỡng 0.55 nên bị lớp từ chối 1 chặn. Cùng kiểu lỗi với câu phép năm trên dev (đạt 0.553, suýt bị chặn).
-- **Câu ghép WFH + phép năm:** bot trả lời đủ hai ý nhưng chỉ trích dẫn trang 1, thiếu trang 2. Ngoài ra câu bị chấm sai vì bot viết "24 tiếng" còn từ khoá là "24 giờ": nội dung đúng, lỗi do cách chấm. Kỳ vọng không được sửa sau khi đã thấy kết quả.
+Không chỉnh câu hỏi hoặc đáp án kỳ vọng trong bộ test dựa trên kết quả vừa xem; nếu thay đổi bộ test, hãy ghi nhận đó là một phiên bản đánh giá mới.
 
-Bộ test do chính tác giả soạn, kích thước nhỏ, nên chỉ mang tính tham khảo, không phải benchmark chuẩn.
+## 6. Phân tích lỗi và hạn chế đã biết
 
-## Phân tích lỗi (dev, bản cuối)
+- **Retrieval với mã số và định danh:** embedding có thể không đưa chunk chứa mã số thuế vào top-3.
+- **Ngưỡng 0.55 khá mong manh:** chunk đúng có thể đạt 0.54–0.55 và bị lớp từ chối đầu tiên loại bỏ. Cosine similarity không phải xác suất câu trả lời đúng.
+- **Trích dẫn do LLM tự ghi nhãn:** model có thể ghi thiếu hoặc nhầm nguồn dù nội dung trả lời đúng. Đây là điểm cần ưu tiên cải thiện.
+- **LLM 3B có giới hạn:** đôi khi lẫn ngôn ngữ, bỏ qua định dạng hoặc trả lời quá cụt, thiếu đơn vị.
+- **Bảng trong PDF:** văn bản trích xuất bằng pypdf có thể làm phẳng cấu trúc bảng, dẫn đến ghép nhầm hàng/cột.
+- **Chunking theo Điều:** `chunk_by_article` phù hợp hơn với tài liệu có cấu trúc tiêu đề dạng `Điều N:`; không phải bộ chia chunk tổng quát cho mọi PDF.
+- **Định dạng PDF:** hiện chỉ hỗ trợ PDF có lớp văn bản; chưa có OCR cho PDF scan.
+- **Phạm vi indexing:** luồng hiện tại được xây quanh một PDF mẫu mỗi lần chạy.
+- **Đánh giá:** dữ liệu nhỏ, do tác giả tự soạn và chấm bằng từ khóa; chưa phải benchmark chuẩn.
+- **Độ ổn định:** kết quả sinh và trích dẫn có thể dao động giữa các lần chạy dù code không đổi.
 
-- **Mã số thuế:** lỗi retrieval. Chunk chứa mã số thuế không lọt top-3. Embedding yếu với mã và số chính xác.
-- **SLA P1:** model chèn từ của ngôn ngữ khác ("2 jam") dù prompt yêu cầu chỉ dùng tiếng Việt.
-- **Tạm ứng và sa thải:** nội dung số đúng nhưng câu trả lời quá cụt ("3", "5"), thiếu đơn vị nên bị chấm sai. Ở câu sa thải, nhãn còn lẫn ký tự Cyrillic nên không được tách khỏi câu trả lời.
-- **Câu hỏi ghép 2 trang:** trả lời đủ ý nhưng chỉ trích dẫn 1 trong 2 trang.
+## 7. Hướng phát triển
 
-## Hạn chế đã biết
-
-- **Ngưỡng 0.55 mong manh:** nhiều chunk đúng chỉ đạt 0.54-0.55. Điểm cosine không phải xác suất đúng, và nó dao động theo cách diễn đạt câu hỏi.
-- **Trích dẫn phụ thuộc vào việc LLM tự ghi nhãn nguồn.** Model 3B có thể ghi thiếu, hoặc ghi nhầm nguồn dù trả lời đúng. Đây là lỗi nguy hiểm nhất vì người dùng dễ tin vào nguồn.
-- **Model 3B nhỏ:** lẫn ngôn ngữ, đôi khi bỏ qua chỉ dẫn định dạng.
-- **Bảng bị làm phẳng** khi `pypdf` trích text, model có thể chọn nhầm ô.
-- `chunk_by_article` chỉ hợp với tài liệu có cấu trúc "Điều N:".
-- Chỉ hỗ trợ PDF có text (không OCR), một file mỗi lần.
-- Bộ đánh giá nhỏ, tự soạn, chấm bằng từ khoá.
-- Kết quả có thể dao động giữa các lần chạy: theo quan sát, một câu test (WFH 30 phút) từng bị trích dẫn sai ở lần chạy trước nhưng đúng ở lần chạy sau dù code không đổi. Chưa rõ nguyên nhân.
-
-## Hướng phát triển
-
-1. Để code tự quyết định nguồn trích dẫn (đối chiếu câu trả lời với từng chunk) thay vì nhờ LLM.
-2. Hybrid search (BM25 + embedding) để xử lý mã số, ngày tháng.
-3. Reranker, hoặc đưa các chunk điểm 0.45-0.55 vào "vùng xám" cho LLM quyết định thay vì ngưỡng cứng.
-4. Thử model lớn hơn hoặc LLM qua API; chuẩn hoá bảng biểu khi trích text.
-5. Mở rộng bộ đánh giá, thêm chấm bằng LLM-as-judge.
-6. Đóng gói FastAPI, giao diện Streamlit, vector DB (Chroma/Qdrant), Docker.
+1. Tự xác định nguồn trích dẫn bằng cách đối chiếu câu trả lời với các chunk, thay vì phụ thuộc hoàn toàn vào nhãn nguồn do LLM sinh.
+2. Kết hợp BM25 và embedding (hybrid search) để cải thiện truy vấn mã số, ngày tháng và định danh chính xác.
+3. Thử reranker hoặc vùng xám cho các chunk có điểm gần ngưỡng thay vì từ chối cứng.
+4. Thử model lớn hơn và cải thiện xử lý bảng biểu khi trích xuất PDF.
+5. Mở rộng bộ đánh giá, bổ sung đánh giá thủ công hoặc LLM-as-judge có kiểm soát.
+6. Đóng gói thành API (FastAPI), giao diện (Streamlit), bổ sung vector database (Chroma/Qdrant) và Docker.
