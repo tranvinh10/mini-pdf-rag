@@ -96,7 +96,7 @@ mini-pdf-rag/
 **Windows PowerShell:**
 
 ```powershell
-py -3.11 -m venv .venv
+py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
@@ -194,18 +194,22 @@ Bộ dev được dùng trong quá trình điều chỉnh chunking, prompt và n
 
 Chênh lệch một câu trên 13 câu chưa đủ để kết luận phiên bản nào tốt hơn. Bản cuối được chọn vì khắc phục lỗi câu trả lời rỗng khi model chỉ in nhãn nguồn. Do bộ dev được dùng để điều chỉnh hệ thống, kết quả trên dev có xu hướng lạc quan.
 
-### Bộ test – 12 câu
+### Bộ test – 12 câu (8 có đáp án, 4 ngoài phạm vi)
 
-Bộ test được soạn riêng để kiểm tra sau khi đóng băng code. Tuy nhiên, tại snapshot repository hiện tại, `results/test_final.txt` chưa khớp với `data/eval_test.json`: kết quả có câu hỏi lặp và không phản ánh đầy đủ danh sách 12 câu hiện tại. Vì vậy, **không nên xem điểm số test được ghi trong log cũ là kết quả xác nhận cho bộ JSON hiện tại**.
+Bộ test được soạn riêng và chỉ chạy sau khi đóng băng code. Lần chạy đầu bị trùng một câu hỏi và thiếu câu, nên file `eval_test.json` đã được sửa cho đủ 12 câu rồi chạy lại. Code không thay đổi giữa hai lần. Hai lần chạy sau khi sửa file cho cùng kết quả.
 
-Hãy chạy lại bộ test sau khi đóng băng code và cập nhật log:
+| Từ chối đúng | Trả lời đúng | Trích dẫn đúng |
+|---:|---:|---:|
+| 4/4 | 6/8 | 6/8 |
 
-```powershell
-$env:PYTHONUTF8 = "1"
-python -m src.eval data/eval_test.json | Tee-Object -FilePath results/test_final.txt
-```
+Log chạy: `results/test_final.txt`.
 
-Không chỉnh câu hỏi hoặc đáp án kỳ vọng trong bộ test dựa trên kết quả vừa xem; nếu thay đổi bộ test, hãy ghi nhận đó là một phiên bản đánh giá mới.
+Hai câu sai:
+
+- **Câu ghép (WFH và phép năm):** bot trả lời đủ hai ý nhưng viết "24 tiếng" (theo cách hỏi), trong khi từ khóa chấm là "24 giờ", nên bị chấm sai ở chỉ số trả lời. Đây là lỗi do cách chấm. Trích dẫn sai thật: chỉ cite trang 1, thiếu trang 2.
+- **Khóa riêng tư thuộc nhóm bảo mật nào:** chunk đúng (Điều 7) đứng top-1 nhưng chỉ đạt 0.54, thấp hơn ngưỡng 0.55 nên bị từ chối ở lớp 1. Đây là lỗi do ngưỡng cứng.
+
+Bộ test do tác giả tự soạn, chỉ có 12 câu, nên mỗi câu chiếm hơn 8% và kết quả chỉ mang tính tham khảo. Trong 8 câu có đáp án, 3 câu diễn đạt lại nội dung đã có ở dev (đi muộn, mật khẩu, SLA P1), 5 câu còn lại hỏi nội dung khác.
 
 ## 6. Phân tích lỗi và hạn chế đã biết
 

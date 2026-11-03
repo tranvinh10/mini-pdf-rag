@@ -7,7 +7,7 @@ import json
 
 model = SentenceTransformer("BAAI/bge-m3")
 
-# Vai trò: lỗi chuyển đổi
+# Vai trò: chuyển đổi
 # biến văn bản -> ma trận số
 def embed_texts(texts):
     return model.encode(texts, normalize_embeddings=True, show_progress_bar=True)

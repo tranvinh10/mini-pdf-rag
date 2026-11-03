@@ -13,7 +13,7 @@ def chunk_by_article(pages, max_len=1200):
                                    "text": part[i:i + max_len]})
     return chunks
 
-def chunk_pages(pages, chunk_size=1500, overlap=150):
+def chunk_pages(pages, chunk_size=800, overlap=150):
     chunks = []
     for p in pages:
         # loại bỏ khoảng trắng ở đầu/cuối văn bản   
